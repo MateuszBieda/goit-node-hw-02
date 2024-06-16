@@ -1,39 +1,38 @@
 const express = require("express");
 const logger = require("morgan");
 const cors = require("cors");
-// const mongoose = require("mongoose");
+const mongoose = require("mongoose");
 
-// require("dotenv").config();
+require("dotenv").config();
 
-const contactsRouter = require("./routes/api/contacts");
+// const contactsRouter = require("./routes/api/contacts");
 
 const app = express();
 
 const formatsLogger = app.get("env") === "development" ? "dev" : "short";
 
-// const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 3000;
 // const uriDb = process.env.DB_HOST
 
-// const connection = mongoose.connect(uriDb, {
-//   useUnifiedTopology: true,
-//   useFindAndModify: false,
-// });
+const connection = mongoose.connect(
+  "mongodb+srv://mateusbieda:vda7pIO6ZYgnoPqdG@cluster0.pwddcpf.mongodb.net/?retryWrites=true&w=majority"
+);
 
-// connection
-//   .then(() => {
-//     app.listen(PORT, function () {
-//       console.log(`Server running. Use our API on port: ${PORT}`)
-//     })
-//   })
-//   .catch((err) =>
-//     console.log(`Server not running. Error message: ${err.message}`),
-//   )
+connection
+  .then(() => {
+    app.listen(PORT, function () {
+      console.log(`Server running. Use our API on port: ${PORT}`);
+    });
+  })
+  .catch((err) =>
+    console.log(`Server not running. Error message: ${err.message}`)
+  );
 
 app.use(logger(formatsLogger));
 app.use(cors());
 app.use(express.json());
 
-app.use("/api/contacts", contactsRouter);
+// app.use("/api/contacts", contactsRouter);
 
 app.use((req, res) => {
   res.status(404).json({ message: "Not found" });
@@ -43,4 +42,5 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: err.message });
 });
 
-module.exports = app;
+app.get("");
+// module.exports = app;
