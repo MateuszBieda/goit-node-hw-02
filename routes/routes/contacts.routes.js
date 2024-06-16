@@ -6,7 +6,7 @@ const contactsController = require("../../controllers/contacts.controller");
 
 router.get("/contacts", contactsController.get);
 router.get("/contacts/:id", contactsController.getById);
-router.post("/contacts/", contactsController.create);
+router.post("/contacts", contactsController.create);
 router.put("/contacts/:id", contactsController.update);
 router.patch("/contacts/:id/favorite", contactsController.updateFavorite);
 router.delete("/contacts/:id", contactsController.remove);

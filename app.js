@@ -1,17 +1,19 @@
-//  const express = require("express");
+const express = require("express");
 // const logger = require("morgan");
 // const cors = require("cors");
 
 const mongoose = require("mongoose");
 require("dotenv").config();
-const app = require("express")();
+const app = express();
 const contactsRouter = require("./routes/routes/contacts.routes");
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4200;
 
 const connection = mongoose.connect(process.env.DATABASE_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
+
+app.use(express.json());
 app.use(contactsRouter);
 
 connection
