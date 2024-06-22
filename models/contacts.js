@@ -1,8 +1,6 @@
 const fs = require("fs/promises");
 const { v4: uuidv4 } = require("uuid");
 
-// const path = require("path");
-// const contactsPath = require("./contacts.json");
 
 const listContacts = async () => {
   try {
@@ -67,8 +65,6 @@ const addContact = async (body) => {
   );
   return newContact;
 };
-// addContact({ name: "John Kowalski", email: "jk@gmail.com", phone: "68767788" });
-// removeContact("dc80303f-c1fa-4e11-92d1-d51837b6fcd5");
 
 const updateContact = async (contactId, body) => {
   const { name, email, phone } = body;
@@ -94,12 +90,6 @@ const updateContact = async (contactId, body) => {
   }
 };
 
-// updateContact("3f8df987-dfb7-4535-b642-bb8771ac8318", {
-//   name: "test1",
-//   email: "test1@gmail.com",
-//   phone: "555555-55",
-// });
-// getContactById("AeHIrLTr6JkxGE6SN-0Rw");
 
 module.exports = {
   listContacts,

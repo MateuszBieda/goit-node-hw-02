@@ -14,7 +14,7 @@ const schema = Joi.object({
 const validation = schema.validate({
   name: "John Newman",
   email: "johnnewman@gmail.com",
-  phone: "12-123-357",
+  phone: "(129) 123-3657",
 });
 if (validation.error) {
   console.log(validation.error.details);
