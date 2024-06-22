@@ -6,7 +6,7 @@ const mongoose = require("mongoose");
 require("dotenv").config();
 const app = express();
 const contactsRouter = require("./routes/routes/contacts.routes");
-const PORT = process.env.PORT || 4200;
+const PORT = process.env.PORT || 3000;
 
 const connection = mongoose.connect(process.env.DATABASE_URL, {
   useNewUrlParser: true,
