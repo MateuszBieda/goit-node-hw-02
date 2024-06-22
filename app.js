@@ -1,7 +1,7 @@
 const express = require("express");
 // const logger = require("morgan");
-// const cors = require("cors");
-
+const cors = require("cors");
+// const routerApi = require("./routes/routes/users.routes");
 const mongoose = require("mongoose");
 require("dotenv").config();
 const app = express();
@@ -10,11 +10,16 @@ const PORT = process.env.PORT || 4200;
 
 const connection = mongoose.connect(process.env.DATABASE_URL, {
   useNewUrlParser: true,
+  useCreateIndex: true,
   useUnifiedTopology: true,
 });
-
+require("./config-passport");
 app.use(express.json());
 app.use(contactsRouter);
+// app.use(routerApi);
+
+
+app.use(cors());
 
 connection
   .then(() => {
