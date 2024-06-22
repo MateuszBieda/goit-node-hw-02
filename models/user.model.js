@@ -22,10 +22,6 @@ const user = new Schema({
     type: String,
     default: null,
   },
-  owner: {
-    type: Schema.Types.ObjectId,
-    ref: "user",
-  },
 });
 
 user.methods.setPassword = function (password) {
@@ -36,6 +32,6 @@ user.methods.validPassword = function (password) {
   return bCrypt.compareSync(password, this.password);
 };
 
-const User = mongoose.model("user", user);
+const User = mongoose.model("user", user, "users");
 
 module.exports = User;

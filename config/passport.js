@@ -1,7 +1,7 @@
-const passport = require("passport");
-const passportJWT = require("passport-jwt");
-const User = require("./models/user.model");
-require("dotenv").config();
+const passport = require('passport');
+const passportJWT = require('passport-jwt');
+const User = require('../models/user.model');
+require('dotenv').config();
 const secret = process.env.SECRET;
 
 const ExtractJWT = passportJWT.ExtractJwt;
@@ -17,10 +17,10 @@ passport.use(
     User.find({ _id: payload.id })
       .then(([user]) => {
         if (!user) {
-          return done(new Error("User not found"));
+          return done(new Error('User not found'));
         }
         return done(null, user);
       })
-      .catch((err) => done(err));
-  })
+      .catch(err => done(err));
+  }),
 );

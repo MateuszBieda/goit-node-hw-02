@@ -6,18 +6,19 @@ const mongoose = require("mongoose");
 require("dotenv").config();
 const app = express();
 const contactsRouter = require("./routes/routes/contacts.routes");
-const PORT = process.env.PORT || 4200;
+const authRouter = require("./routes/routes/auth.routes");
+const PORT = process.env.PORT || 3000;
 
 const connection = mongoose.connect(process.env.DATABASE_URL, {
   useNewUrlParser: true,
   useCreateIndex: true,
   useUnifiedTopology: true,
 });
-require("./config-passport");
 app.use(express.json());
-app.use(contactsRouter);
+require("./config/passport");
+app.use(contactsRouter, authRouter);
+// app.use( authRouter);
 // app.use(routerApi);
-
 
 app.use(cors());
 
