@@ -3,7 +3,7 @@ const contactsService = require("../services/contacts.service");
 const get = async (req, res, next) => {
   try {
     const { query, user } = req;
-    const results = await contactsService.getAll({ query, owner: user._id });
+    const results = await contactsService.getAll({ ...query, owner: user._id });
     res.json({ status: "success", code: 200, data: { contacts: results } });
   } catch (e) {
     console.error(e);
