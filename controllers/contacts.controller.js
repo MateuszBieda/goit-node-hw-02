@@ -2,7 +2,7 @@ const contactsService = require("../services/contacts.service");
 
 const get = async (req, res, next) => {
   try {
-    const results = await contactsService.getAll();
+    const results = await contactsService.getContacts();
     res.json({ status: "success", code: 200, data: { contacts: results } });
   } catch (e) {
     console.error(e);
@@ -11,10 +11,19 @@ const get = async (req, res, next) => {
 };
 
 const getById = async (req, res, next) => {
+  const { id } = req.params;
   try {
-    const { id } = req.params;
-    const results = await contactsService.getOne(id);
-    res.json({ status: "success", code: 200, data: { contact: results } });
+    const result = await contactsService.getContact(id);
+    if (result) {
+      res.json({ status: "success", code: 200, data: { contact: result } });
+    } else {
+      res.status(404).json({
+        status: "error",
+        code: 404,
+        message: `Not found contact id: ${id}`,
+        data: "Not Found",
+      });
+    }
   } catch (e) {
     console.error(e);
     next(e);
@@ -23,7 +32,7 @@ const getById = async (req, res, next) => {
 const create = async (req, res, next) => {
   try {
     const { body } = req;
-    const results = await contactsService.create(body);
+    const results = await contactsService.createContact(body);
     res.json({ status: "success", code: 200, data: { contact: results } });
   } catch (e) {
     console.error(e);
@@ -31,11 +40,20 @@ const create = async (req, res, next) => {
   }
 };
 const update = async (req, res, next) => {
+  const { id } = req.params;
+  const { body } = req;
   try {
-    const { id } = req.params;
-    const { body } = req;
-    const results = await contactsService.update(id, body);
-    res.json({ status: "success", code: 200, data: { contact: results } });
+    const result = await contactsService.updateContact({ id, body });
+    if (result) {
+      res.json({ status: "success", code: 200, data: { contact: result } });
+    } else {
+      res.status(404).json({
+        status: "error",
+        code: 404,
+        message: `Not found contact id: ${id}`,
+        data: "Not Found",
+      });
+    }
   } catch (e) {
     console.error(e);
     next(e);
@@ -43,11 +61,29 @@ const update = async (req, res, next) => {
 };
 
 const updateFavorite = async (req, res, next) => {
+  const { contactId } = req.params;
+  const { favorite } = req.body;
+
+  if (typeof favorite === "undefined") {
+    return res.status(400).json({
+      status: "error",
+      code: 400,
+      message: "missing field favorite",
+    });
+  }
   try {
-    const { id } = req.params;
-    const { favorite } = req.body;
-    const results = await contactsService.updateStatus(id, favorite);
-    res.json({ status: "success", code: 200, data: { contact: results } });
+    const result = await contactsService.updateStatus(contactId, { favorite });
+
+    if (!result) {
+      res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "missing field favorite",
+        data: "Not Found",
+      });
+    } else {
+      res.json({ status: "success", code: 200, data: { contact: result } });
+    }
   } catch (e) {
     console.error(e);
     next(e);
@@ -57,7 +93,7 @@ const updateFavorite = async (req, res, next) => {
 const remove = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const results = await contactsService.remove(id);
+    const results = await contactsService.removeContact(id);
     res.json({
       status: "success",
       code: 200,

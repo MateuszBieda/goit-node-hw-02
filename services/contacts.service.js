@@ -1,30 +1,38 @@
 const Contact = require("../models/contacts.model");
 
-const getAll = async () => {
+const getContacts = async () => {
   return Contact.find();
 };
 
-const getOne = async (id) => {
+const getContact = async (id) => {
   return Contact.findById(id);
 };
-const create = async (data) => {
+const createContact = async (data) => {
   return Contact.create(data);
 };
-const update = async (id, data) => {
-  return Contact.findByIdAndUpdate(id, data);
+const updateContact = async (id, toUpdate) => {
+  return Contact.findByIdAndUpdate(
+    id,
+    { $set: toUpdate },
+    { new: true, upsert: false, includeResultMetadata: false }
+  );
 };
-const updateStatus = async (id, favorite) => {
-  return Contact.findByIdAndUpdate(id, { favorite });
+const updateStatus = async (id, toUpdate) => {
+  return Contact.findByIdAndUpdate(
+    id,
+    { $set: toUpdate },
+    { new: true, upsert: false, includeResultMetadata: false }
+  );
 };
-const remove = async (id) => {
+const removeContact = async (id) => {
   return Contact.findByIdAndDelete(id);
 };
 
 module.exports = {
-  getAll,
-  getOne,
-  create,
-  update,
+  getContacts,
+  getContact,
+  createContact,
+  updateContact,
   updateStatus,
-  remove,
+  removeContact,
 };
