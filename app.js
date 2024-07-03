@@ -1,4 +1,5 @@
 const express = require("express");
+
 const createError = require("http-errors");
 const cors = require("cors");
 const mongoose = require("mongoose");
@@ -13,9 +14,11 @@ app.use(express.json());
 
 app.use(contactsRouter);
 
+
 app.use((req, res) => {
   res.status(404).json({ message: "Not found" });
 });
+
 
 // app.use(routerApi);
 
@@ -35,3 +38,4 @@ connection
     console.error(`Server not running. Error message: [${err.message}]`);
     process.exit(1);
   });
+
