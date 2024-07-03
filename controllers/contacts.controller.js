@@ -1,4 +1,13 @@
 const contactsService = require("../services/contacts.service");
+const Joi = require("joi");
+
+const schema = Joi.object({
+  name: Joi.string().required(),
+  email: Joi.string().required().email({ minDomainSegments: 2 }),
+  phone: Joi.string()
+    .required()
+    .pattern(/^\(\d{3}\) \d{3}-\d{4}$/),
+});
 
 const get = async (req, res, next) => {
   try {
@@ -30,6 +39,10 @@ const getById = async (req, res, next) => {
   }
 };
 const create = async (req, res, next) => {
+  const { error } = schema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ message: error.details[0].message });
+  }
   try {
     const { body } = req;
     const results = await contactsService.createContact(body);
@@ -40,10 +53,16 @@ const create = async (req, res, next) => {
   }
 };
 const update = async (req, res, next) => {
+  
+  const { error } = schema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ message: error.details[0].message });
+  }
+
   const { id } = req.params;
   const { body } = req;
   try {
-    const result = await contactsService.updateContact({ id, body });
+    const result = await contactsService.updateContact(id, body);
     if (result) {
       res.json({ status: "success", code: 200, data: { contact: result } });
     } else {
