@@ -1,17 +1,30 @@
 const User = require("../models/user.model");
+
+
 const jwt = require("jsonwebtoken");
 const secret = process.env.SECRET;
+const Joi = require("joi");
 
-const signin = async (req, res) => {
+const schema = Joi.object({
+  email: Joi.string().required().email({ minDomainSegments: 2 }),
+  password: Joi.string()
+    .required()
+    .pattern(/^[a-zA-Z0-9]{3,30}$/),
+});
+
+const login = async (req, res) => {
+  const { error } = schema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ message: error.details[0].message });
+  }
   const { email, password } = req.body;
   const user = await User.findOne({ email });
 
   if (!user || !user.validPassword(password)) {
-    return res.status(400).json({
+    return res.status(401).json({
       status: "error",
-      code: 400,
-      message: "Incorrect login or password",
-      data: "Bad request",
+      code: 401,
+      message: "Email or password is wrong",
     });
   }
   const payload = {
@@ -26,19 +39,53 @@ const signin = async (req, res) => {
     data: {
       token,
     },
+    message: {
+      email: email,
+      password: password,
+    },
   });
 };
 
-// const signout = (req, res) => {};
+const logout = async (req, res, next) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: "Not authorized" });
+    }
+
+    const user = req.user;
+    user.token = null;
+    await user.save();
+
+    res.status(204).end();
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getCurrentUser = async (req, res, next) => {
+  try {
+    const user = req.user;
+    res.status(200).json({
+      email: user.email,
+      subscription: user.subscription,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 const signup = async (req, res, next) => {
+  const { error } = schema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ message: error.details[0].message });
+  }
   const { email, password } = req.body;
   const user = await User.findOne({ email }).lean();
   if (user) {
     return res.status(409).json({
       status: "error",
       code: 409,
-      message: "Email is already in use",
+      message: "Email in use",
       data: "Conflict",
     });
   }
@@ -51,6 +98,10 @@ const signup = async (req, res, next) => {
       code: 201,
       data: {
         message: "Registration successful",
+        user: {
+          email: email,
+          subscription: "starter",
+        },
       },
     });
   } catch (error) {
@@ -59,7 +110,8 @@ const signup = async (req, res, next) => {
 };
 
 module.exports = {
-  signin,
-//   signout,
+  login,
+  logout,
   signup,
+  getCurrentUser,
 };
