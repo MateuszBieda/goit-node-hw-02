@@ -1,6 +1,7 @@
 const express = require("express");
 // const logger = require("morgan");
 const cors = require("cors");
+require ('./config/passport');
 // const routerApi = require("./routes/routes/users.routes");
 const mongoose = require("mongoose");
 require("dotenv").config();
