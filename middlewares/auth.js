@@ -10,10 +10,9 @@ module.exports = (req, res, next) => {
         data: "Unauthorized",
       });
     }
-    const token =
-      req.headers.authorization && req.headers.authorization.split(" ")[1];
-    console.log(token);
-    if (!token) {
+
+    
+    if (!user.token) {
       return res.status(401).json({
         status: "error",
         code: 401,
