@@ -9,7 +9,18 @@ const schema = Joi.object({
     .pattern(/^\(\d{3}\) \d{3}-\d{4}$/),
 });
 
+const querySchema = Joi.object({
+  name: Joi.string(),
+  email: Joi.string().email({ minDomainSegments: 2 }),
+  phone: Joi.string().pattern(/^\(\d{3}\) \d{3}-\d{4}$/),
+  favorite: Joi.boolean().optional(),
+});
+
 const get = async (req, res, next) => {
+  const { error } = querySchema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ message: error.details[0].message });
+  }
   try {
     const { query, user } = req;
     const results = await contactsService.getAll({ ...query, owner: user._id });

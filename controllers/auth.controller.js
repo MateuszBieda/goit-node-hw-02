@@ -1,6 +1,5 @@
 const User = require("../models/user.model");
 
-
 const jwt = require("jsonwebtoken");
 const secret = process.env.SECRET;
 const Joi = require("joi");
@@ -33,6 +32,8 @@ const login = async (req, res) => {
   };
 
   const token = jwt.sign(payload, secret, { expiresIn: "1h" });
+  user.token = token;
+  
   res.json({
     status: "success",
     code: 200,
