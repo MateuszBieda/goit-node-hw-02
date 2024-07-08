@@ -23,7 +23,10 @@ const get = async (req, res, next) => {
   }
   try {
     const { query, user } = req;
-    const results = await contactsService.getAll({ ...query, owner: user._id });
+    const results = await contactsService.getContacts({
+      ...query,
+      owner: user._id,
+    });
     res.json({ status: "success", code: 200, data: { contacts: results } });
   } catch (e) {
     console.error(e);
@@ -35,14 +38,13 @@ const getById = async (req, res, next) => {
   try {
     const { params, user } = req;
     const { id } = params;
-    const results = await contactsService.getOne(id, user._id);
+    const results = await contactsService.getContact(id, user._id);
     res.json({ status: "success", code: 200, data: { contact: results } });
   } catch (e) {
     console.error(e);
     next(e);
   }
 };
-
 
 const create = async (req, res, next) => {
   const { error } = schema.validate(req.body);
@@ -51,7 +53,10 @@ const create = async (req, res, next) => {
   }
   try {
     const { body, user } = req;
-    const results = await contactsService.create({ ...body, owner: user._id });
+    const results = await contactsService.createContact({
+      ...body,
+      owner: user._id,
+    });
     res.json({ status: "success", code: 200, data: { contact: results } });
   } catch (e) {
     console.error(e);
@@ -66,7 +71,7 @@ const update = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { body, user } = req;
-    const results = await contactsService.update(id, user._id, body);
+    const results = await contactsService.updateContact(id, user._id, body);
     res.json({ status: "success", code: 200, data: { contact: results } });
   } catch (e) {
     console.error(e);
@@ -91,7 +96,7 @@ const remove = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { user } = req;
-    const results = await contactsService.remove(id, user._id);
+    const results = await contactsService.removeContact(id, user._id);
     res.json({
       status: "success",
       code: 200,
