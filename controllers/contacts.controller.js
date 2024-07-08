@@ -36,10 +36,22 @@ const get = async (req, res, next) => {
 
 const getById = async (req, res, next) => {
   try {
-    const { params, user } = req;
-    const { id } = params;
-    const results = await contactsService.getContact(id, user._id);
-    res.json({ status: "success", code: 200, data: { contact: results } });
+    const { id } = req.params;
+    const { _id: userId } = req.user;
+    // const { params, user } = req;
+    // const { id } = params;
+
+    const result = await contactsService.getContact(id, userId);
+
+    if (!result) {
+      return res.status(404).json({
+        status: "error",
+        code: 404,
+        message: `Not found contact id: ${id}`,
+        data: "Not Found",
+      });
+    }
+    res.json({ status: "success", code: 200, data: { contact: result } });
   } catch (e) {
     console.error(e);
     next(e);
