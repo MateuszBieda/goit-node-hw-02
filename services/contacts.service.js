@@ -1,11 +1,11 @@
 const Contact = require("../models/contacts.model");
 
-const getContacts = async () => {
-  return Contact.find();
+const getContacts = async (filter) => {
+  return Contact.find(filter);
 };
 
-const getContact = async (id) => {
-  return Contact.findById(id);
+const getContact = async (id, userId) => {
+  return Contact.findById({_id: id, owner: userId});
 };
 const createContact = async (data) => {
   return Contact.create(data);
