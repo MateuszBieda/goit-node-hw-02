@@ -1,8 +1,7 @@
 const express = require("express");
-// const logger = require("morgan");
 const cors = require("cors");
 require ('./config/passport');
-// const routerApi = require("./routes/routes/users.routes");
+
 const mongoose = require("mongoose");
 require("dotenv").config();
 const app = express();
@@ -33,13 +32,3 @@ connection
     console.error(`Server not running. Error message: [${err.message}]`);
     process.exit(1);
   });
-
-// const contactsRouter = require("./routes/routes/contacts.routes");
-
-// const formatsLogger = app.get("env") === "development" ? "dev" : "short";
-
-// app.use(logger(formatsLogger));
-// app.use(cors());
-// app.use(express.json());
-
-// app.use("/api/contacts", contactsRouter);
