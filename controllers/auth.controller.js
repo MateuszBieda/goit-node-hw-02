@@ -1,8 +1,14 @@
 const User = require("../models/user.model");
+const gravatar = require("gravatar");
 
 const jwt = require("jsonwebtoken");
 const secret = process.env.SECRET;
 const Joi = require("joi");
+
+// const fs = require("fs").promises;
+// const path = require('path');
+// const multer = require("multer");
+// const {v4: uuidV4} = require("uuid");
 
 const schema = Joi.object({
   email: Joi.string().required().email({ minDomainSegments: 2 }),
@@ -92,6 +98,7 @@ const signup = async (req, res, next) => {
     });
   }
   try {
+    const avatarURL = gravatar.url(email);
     const newUser = new User({ email });
     newUser.setPassword(password);
     await newUser.save();
@@ -103,6 +110,7 @@ const signup = async (req, res, next) => {
         user: {
           email: email,
           subscription: "starter",
+          avatarURL: avatarURL,
         },
       },
     });

@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+// const path = require("path");
 require("./config/passport");
 
 const mongoose = require("mongoose");
@@ -17,11 +18,15 @@ const connection = mongoose.connect(process.env.DATABASE_URL, {
 app.use(express.json());
 app.use(contactsRouter, authRouter);
 
+app.use(express.static("public"));
+app.use("/avatars", express.static("avatars"));
+
 
 app.use((req, res) => {
   res.status(404).json({ message: "Not found" });
 });
 app.use(cors());
+
 
 app.use((req, res, next) => {
   next(createError(404));
