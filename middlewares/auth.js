@@ -11,7 +11,6 @@ module.exports = (req, res, next) => {
       });
     }
 
-    
     if (!user.token) {
       return res.status(401).json({
         status: "error",
