@@ -1,14 +1,12 @@
 const User = require("../models/user.model");
 const gravatar = require("gravatar");
+// const crypto = require("crypto");
 
 const jwt = require("jsonwebtoken");
 const secret = process.env.SECRET;
 const Joi = require("joi");
 
-// const fs = require("fs").promises;
-// const path = require('path');
-// const multer = require("multer");
-// const {v4: uuidV4} = require("uuid");
+
 
 const schema = Joi.object({
   email: Joi.string().required().email({ minDomainSegments: 2 }),
@@ -98,7 +96,19 @@ const signup = async (req, res, next) => {
     });
   }
   try {
+    // const getGravatarUrl = (email, size = 80) => {
+    //   const trimmedEmail = email.trim().toLowerCase();
+    //   const hash = crypto
+    //     .createHash("sha256")
+    //     .update(trimmedEmail)
+    //     .digest("hex");
+    //   return `https://www.gravatar.com/avatars/${hash}?s=${size}&d=identicon`;
+    // };
+
+    // const size = 250; // Optional size parameter
+    // const avatarURL = getGravatarUrl(email, size);
     const avatarURL = gravatar.url(email);
+    console.log(avatarURL);
     const newUser = new User({ email });
     newUser.setPassword(password);
     await newUser.save();
