@@ -1,4 +1,5 @@
 const User = require("../models/user.model");
+const { v4: uuidV4 } = require("uuid");
 const gravatar = require("gravatar");
 const path = require("path");
 const fs = require("fs/promises");
@@ -98,7 +99,7 @@ const signup = async (req, res, next) => {
   }
   try {
     const avatarURL = gravatar.url(email, { s: 100, protocol: "https" });
-    console.log(avatarURL);
+
     const newUser = new User({ email, avatarURL });
     newUser.setPassword(password);
     await newUser.save();
@@ -121,19 +122,32 @@ const signup = async (req, res, next) => {
 
 const updateAvatar = async (req, res) => {
   const { _id } = req.user;
-  const { path: tempUpload, originalname } = req.file;
-  const img = await Jimp.read(tempUpload);
-  await img
-    .autocrop()
-    .cover(250, 250, Jimp.HORIZONTAL_ALIGN_CENTER | Jimp.VERTICAL_ALIGN_MIDDLE)
-    .writeAsync(tempUpload);
+  const { path: tmpUpload, originalname } = req.file;
 
-  const filename = `${Date.now()}-${originalname}`;
-  const resultUpload = path.join(avatarsDir, filename);
-  await fs.rename(tempUpload, resultUpload);
-  const avatarURL = path.join("avatars", filename);
-  await User.findByIdAndUpdate(_id, { avatarURL });
-  res.status(200).json({ avatarURL });
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: "Not authorized" });
+    }
+
+    const image = await Jimp.read(tmpUpload);
+    await image
+      .autocrop()
+      .cover(
+        250,
+        250,
+        Jimp.HORIZONTAL_ALIGN_CENTER | Jimp.VERTICAL_ALIGN_MIDDLE
+      )
+      .writeAsync(tmpUpload);
+
+    const filename = `${uuidV4()}-${originalname}`;
+    const resultUpload = path.join(avatarsDir, filename);
+    await fs.rename(tmpUpload, resultUpload);
+    const avatarURL = path.join("avatars", filename);
+    await User.findByIdAndUpdate(_id, { avatarURL });
+    res.status(200).json({ avatarURL });
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 module.exports = {
