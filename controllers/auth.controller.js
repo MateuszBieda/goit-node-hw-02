@@ -140,9 +140,13 @@ const updateAvatar = async (req, res) => {
       .writeAsync(tmpUpload);
 
     const filename = `${uuidV4()}-${originalname}`;
+    console.log(filename);
     const resultUpload = path.join(avatarsDir, filename);
+    console.log(resultUpload);
     await fs.rename(tmpUpload, resultUpload);
     const avatarURL = path.join("avatars", filename);
+    console.log(avatarURL);
+    console.log(tmpUpload);
     await User.findByIdAndUpdate(_id, { avatarURL });
     res.status(200).json({ avatarURL });
   } catch (error) {
