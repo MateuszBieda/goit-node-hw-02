@@ -1,12 +1,19 @@
-const User = require("../models/user.model");
-const { v4: uuidV4 } = require("uuid");
-const gravatar = require("gravatar");
+// Core Node.js Modules
 const path = require("path");
 const fs = require("fs/promises");
+
+// NPM Packages
+const { v4: uuidV4 } = require("uuid");
+const gravatar = require("gravatar");
 const Jimp = require("jimp");
 const jwt = require("jsonwebtoken");
-const secret = process.env.SECRET;
 const Joi = require("joi");
+
+// Project-Specific Modules
+const User = require("../models/user.model");
+const secret = process.env.SECRET;
+
+
 const avatarsDir = path.join(__dirname, "../", "public", "avatars");
 
 const schema = Joi.object({
