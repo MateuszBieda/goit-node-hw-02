@@ -8,10 +8,11 @@ const gravatar = require("gravatar");
 const Jimp = require("jimp");
 const jwt = require("jsonwebtoken");
 const Joi = require("joi");
+// const hb = require("handlebars");
 
 // Project-Specific Modules
 const User = require("../models/user.model");
-const sendEmail = require("../email/email");
+const emailVerification = require("../email/email");
 const secret = process.env.SECRET;
 
 const avatarsDir = path.join(__dirname, "../", "public", "avatars");
@@ -110,7 +111,7 @@ const signup = async (req, res, next) => {
     const newUser = new User({ email, avatarURL, verificationToken });
     newUser.setPassword(password);
     await newUser.save();
-    sendEmail.sendEmail();
+    emailVerification.sendEmail(email, "<h1>Welcome</h1>");
     res.status(201).json({
       status: "success",
       code: 201,
@@ -175,10 +176,16 @@ const verifyToken = async (req, res) => {
         message: "User not found",
       });
     }
-    res.status(200).json({ verificationToken });
-    // user.verificationToken = null;
+
     user.verify = true;
+    user.verificationToken = null;
+
     await user.save();
+    res.status(200).json({
+      status: "OK",
+      code: 200,
+      message: "Verification successful",
+    });
   } catch (error) {
     console.log(error);
   }
@@ -209,7 +216,7 @@ const secondVerification = async (req, res) => {
         message: "Verification has already been passed",
       });
     }
-    sendEmail.sendEmail();
+    emailVerification.sendEmail();
     return res.json({
       status: "success",
       code: 200,

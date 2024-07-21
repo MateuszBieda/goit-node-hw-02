@@ -14,13 +14,13 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const sendEmail = async () => {
+const sendEmail = async (to, html) => {
   const info = await transporter.sendMail({
     from: "mateusbieda@gmail.com",
-    to: "mateusbieda@gmail.com",
-    subject: "Hello ✔",
-    text: "Hello world?",
-    html: '<h1>Hello there</h1> <a href="http://localhost:3000/users/verify/bb8b85fb-3d4a-49f7-a714-7c85a2885797">Welcome on my website</a>',
+    to,
+    subject:"Email verification",  
+    html,
+    //  '<h1>Hello there</h1> <a href="http://localhost:3000/users/verify/bb8b85fb-3d4a-49f7-a714-7c85a2885797">Welcome on my website</a>',
   });
 
   console.log("Message sent: %s", info.messageId);
