@@ -24,6 +24,10 @@ const schema = Joi.object({
     .pattern(/^[a-zA-Z0-9]{3,30}$/),
 });
 
+const schemaEmail = Joi.object({
+  email: Joi.string().required().email({ minDomainSegments: 2 }),
+});
+
 const login = async (req, res) => {
   const { error } = schema.validate(req.body);
   if (error) {
@@ -111,7 +115,10 @@ const signup = async (req, res, next) => {
     const newUser = new User({ email, avatarURL, verificationToken });
     newUser.setPassword(password);
     await newUser.save();
-    emailVerification.sendEmail(email, "<h1>Welcome</h1>");
+    emailVerification.sendEmail(
+      email,
+      `<h1>Hello</h1> <a href="http://localhost:3000/users/verify/${verificationToken}">Verify your email address</a>`
+    );
     res.status(201).json({
       status: "success",
       code: 201,
@@ -192,13 +199,12 @@ const verifyToken = async (req, res) => {
 };
 
 const secondVerification = async (req, res) => {
-  const { error } = schema.validate(req.body);
+  const { error } = schemaEmail.validate(req.body);
   if (error) {
     return res.status(400).json({ message: error.details[0].message });
   }
   const { email } = req.body;
   const user = await User.findOne({ email });
-  // const user = await User.findOne({ email });
 
   try {
     if (!email) {
