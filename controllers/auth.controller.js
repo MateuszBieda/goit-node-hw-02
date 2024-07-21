@@ -11,8 +11,8 @@ const Joi = require("joi");
 
 // Project-Specific Modules
 const User = require("../models/user.model");
+const sendEmail = require("../email/email");
 const secret = process.env.SECRET;
-
 
 const avatarsDir = path.join(__dirname, "../", "public", "avatars");
 
@@ -106,10 +106,11 @@ const signup = async (req, res, next) => {
   }
   try {
     const avatarURL = gravatar.url(email, { s: 100, protocol: "https" });
-
-    const newUser = new User({ email, avatarURL });
+    const verificationToken = uuidV4();
+    const newUser = new User({ email, avatarURL, verificationToken });
     newUser.setPassword(password);
     await newUser.save();
+    sendEmail.sendEmail();
     res.status(201).json({
       status: "success",
       code: 201,
@@ -119,6 +120,7 @@ const signup = async (req, res, next) => {
           email: email,
           subscription: "starter",
           avatarURL: avatarURL,
+          verificationToken: verificationToken,
         },
       },
     });
@@ -161,10 +163,69 @@ const updateAvatar = async (req, res) => {
   }
 };
 
+const verifyToken = async (req, res) => {
+  const { verificationToken } = req.params;
+
+  try {
+    const user = await User.findOne({ verificationToken });
+    if (!user) {
+      return res.status(404).json({
+        status: "Not found",
+        code: 400,
+        message: "User not found",
+      });
+    }
+    res.status(200).json({ verificationToken });
+    // user.verificationToken = null;
+    user.verify = true;
+    await user.save();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const secondVerification = async (req, res) => {
+  const { error } = schema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ message: error.details[0].message });
+  }
+  const { email } = req.body;
+  const user = await User.findOne({ email });
+  // const user = await User.findOne({ email });
+
+  try {
+    if (!email) {
+      return res.status(400).json({
+        status: "Not found",
+        code: 400,
+        message: "missing required field email",
+      });
+    }
+
+    if (user && user.verify === true) {
+      return res.status(400).json({
+        status: "Bad Request",
+        code: 400,
+        message: "Verification has already been passed",
+      });
+    }
+    sendEmail.sendEmail();
+    return res.json({
+      status: "success",
+      code: 200,
+      message: "Verification email sent",
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   login,
   logout,
   signup,
   getCurrentUser,
   updateAvatar,
+  verifyToken,
+  secondVerification,
 };
