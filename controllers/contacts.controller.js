@@ -1,5 +1,5 @@
-const contactsService = require("../services/contacts.service");
 const Joi = require("joi");
+const contactsService = require("../services/contacts.service");
 
 const schema = Joi.object({
   name: Joi.string().required(),
