@@ -115,7 +115,7 @@ const signup = async (req, res, next) => {
     const newUser = new User({ email, avatarURL, verificationToken });
     newUser.setPassword(password);
     await newUser.save();
-    emailVerification.sendEmail(
+    await emailVerification.sendEmail(
       email,
       `<h1>Hello</h1> <a href="http://localhost:3000/users/verify/${verificationToken}">Verify your email address</a>`
     );
@@ -222,7 +222,7 @@ const secondVerification = async (req, res) => {
         message: "Verification has already been passed",
       });
     }
-    emailVerification.sendEmail();
+    await emailVerification.sendEmail();
     return res.json({
       status: "success",
       code: 200,
