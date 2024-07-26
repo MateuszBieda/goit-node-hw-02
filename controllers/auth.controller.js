@@ -1,3 +1,4 @@
+
 // Core Node.js Modules
 const path = require("path");
 const fs = require("fs/promises");
@@ -8,6 +9,7 @@ const gravatar = require("gravatar");
 const Jimp = require("jimp");
 const jwt = require("jsonwebtoken");
 const Joi = require("joi");
+
 // const hb = require("handlebars");
 
 // Project-Specific Modules
@@ -111,8 +113,10 @@ const signup = async (req, res, next) => {
   }
   try {
     const avatarURL = gravatar.url(email, { s: 100, protocol: "https" });
+
     const verificationToken = uuidV4();
     const newUser = new User({ email, avatarURL, verificationToken });
+
     newUser.setPassword(password);
     await newUser.save();
     emailVerification.sendEmail(
@@ -128,7 +132,9 @@ const signup = async (req, res, next) => {
           email: email,
           subscription: "starter",
           avatarURL: avatarURL,
+
           verificationToken: verificationToken,
+
         },
       },
     });
@@ -157,6 +163,7 @@ const updateAvatar = async (req, res) => {
       .writeAsync(tmpUpload);
 
     const filename = `${uuidV4()}-${originalname}`;
+
     console.log(filename);
     const resultUpload = path.join(avatarsDir, filename);
     console.log(resultUpload);
@@ -164,12 +171,14 @@ const updateAvatar = async (req, res) => {
     const avatarURL = path.join("avatars", filename);
     console.log(avatarURL);
     console.log(tmpUpload);
+
     await User.findByIdAndUpdate(_id, { avatarURL });
     res.status(200).json({ avatarURL });
   } catch (error) {
     console.log(error);
   }
 };
+
 
 const verifyToken = async (req, res) => {
   const { verificationToken } = req.params;
@@ -233,6 +242,7 @@ const secondVerification = async (req, res) => {
   }
 };
 
+
 module.exports = {
   login,
   logout,
@@ -241,4 +251,5 @@ module.exports = {
   updateAvatar,
   verifyToken,
   secondVerification,
+
 };

@@ -15,7 +15,9 @@ router.patch(
   upload.single("avatar"),
   authController.updateAvatar
 );
+
 router.get("/users/verify/:verificationToken", authController.verifyToken);
 router.post("/users/verify", authController.secondVerification);
+
 
 module.exports = router;
